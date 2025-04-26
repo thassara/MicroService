@@ -1,5 +1,6 @@
 package com.api_gateway.demo.filter;
 
+
 import com.api_gateway.demo.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -13,7 +14,6 @@ import reactor.core.publisher.Mono;
 @Component
 public class JwtAuthenticationFilterGatewayFilterFactory extends AbstractGatewayFilterFactory<JwtAuthenticationFilterGatewayFilterFactory.Config> {
     // Your existing code here...
-
 
 
     @Autowired

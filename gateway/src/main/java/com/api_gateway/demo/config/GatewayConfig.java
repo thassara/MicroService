@@ -1,6 +1,6 @@
 package com.api_gateway.demo.config;
 
-import com.api_gateway.demo.filter.JwtAuthenticationFilterGatewayFilterFactory;
+//import com.api_gateway.demo.filter.JwtAuthenticationFilterGatewayFilterFactory;
 import com.api_gateway.demo.service.JwtService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
