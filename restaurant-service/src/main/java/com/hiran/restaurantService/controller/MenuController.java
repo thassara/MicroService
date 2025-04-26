@@ -40,7 +40,7 @@ public class MenuController {
         }
     }
 
-    @PutMapping("/{itemId}")
+    @PutMapping("/update/{itemId}")
     public ResponseEntity<MenuItem> updateMenuItem(
             @PathVariable String restaurantId,
             @PathVariable String itemId,
@@ -48,7 +48,7 @@ public class MenuController {
         return ResponseEntity.ok(menuService.updateMenuItem(restaurantId, itemId, menuItemDTO));
     }
 
-    @DeleteMapping("/{itemId}")
+    @DeleteMapping("/delete/{itemId}")
     public ResponseEntity<Void> deleteMenuItem(
             @PathVariable String restaurantId,
             @PathVariable String itemId) {
@@ -62,7 +62,7 @@ public class MenuController {
         return ResponseEntity.ok(menuService.getMenuItems(restaurantId));
     }
 
-    @PatchMapping("/{itemId}/availability")
+    @PatchMapping("/availability/{itemId}")
     public ResponseEntity<MenuItem> toggleItemAvailability(
             @PathVariable String restaurantId,
             @PathVariable String itemId) {

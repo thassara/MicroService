@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/restaurants")
+@RequestMapping("/app-admin")
 @CrossOrigin(origins = "http://localhost:3001", allowedHeaders = "*", allowCredentials = "true")
 public class AdminController {
     @Autowired
