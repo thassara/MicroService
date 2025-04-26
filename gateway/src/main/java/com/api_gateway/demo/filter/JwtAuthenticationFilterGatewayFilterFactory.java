@@ -2,42 +2,44 @@ package com.api_gateway.demo.filter;
 
 import com.api_gateway.demo.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.factory.GatewayFilterFactory;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @Component
-public class JwtAuthenticationFilter implements GatewayFilterFactory<JwtAuthenticationFilter.Config> {
+public class JwtAuthenticationFilterGatewayFilterFactory extends AbstractGatewayFilterFactory<JwtAuthenticationFilterGatewayFilterFactory.Config> {
+    // Your existing code here...
+
+
 
     @Autowired
     private JwtService jwtService;
 
-    public JwtAuthenticationFilter(JwtService jwtService) {
-        this.jwtService = jwtService;
+    public JwtAuthenticationFilterGatewayFilterFactory() {
+        super(Config.class);
     }
 
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
-
-            // ✅ Skip JWT validation for auth endpoints (like /api/auth/register or /api/auth/login)
             String path = request.getURI().getPath();
+
+            // Skip token check for auth endpoints
             if (path.startsWith("/api/auth")) {
                 return chain.filter(exchange);
             }
 
-            // ✅ Check for Authorization header
             String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return Mono.error(new RuntimeException("Missing or invalid Authorization header"));
             }
 
-            String token = authHeader.substring(7); // Remove "Bearer "
+            String token = authHeader.substring(7);
 
             try {
                 jwtService.validateToken(token);
@@ -47,7 +49,6 @@ public class JwtAuthenticationFilter implements GatewayFilterFactory<JwtAuthenti
                     return Mono.error(new RuntimeException("No roles found in token"));
                 }
 
-                // ✅ Add the role to headers and continue the request
                 ServerHttpRequest mutatedRequest = request.mutate()
                         .header("X-User-Role", role)
                         .build();
@@ -65,6 +66,6 @@ public class JwtAuthenticationFilter implements GatewayFilterFactory<JwtAuthenti
     }
 
     public static class Config {
-        // Empty config class required by GatewayFilterFactory
+        // Required config class
     }
 }
