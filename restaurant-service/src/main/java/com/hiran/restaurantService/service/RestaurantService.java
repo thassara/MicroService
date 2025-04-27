@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,7 +48,6 @@ public class RestaurantService {
     public Restaurant createRestaurant(RestaurantDTO restaurantDTO, MultipartFile coverImage) {
         Restaurant restaurant = new Restaurant();
         restaurant.setName(restaurantDTO.getName());
-        restaurant.setAddress(restaurantDTO.getAddress());
         restaurant.setContactNumber(restaurantDTO.getContactNumber());
         restaurant.setCuisineType(restaurantDTO.getCuisineType());
         restaurant.setOpeningTime(restaurantDTO.getOpeningTime());
@@ -57,7 +57,12 @@ public class RestaurantService {
         restaurant.setAvailable(false);
         restaurant.setApproved(false);
         restaurant.setRegistrationDate(String.valueOf(LocalDateTime.now()));
+        restaurant.setFormattedAddress(restaurantDTO.getFormattedAddress());
 
+        restaurant.setLocation(new GeoJsonPoint(
+                restaurantDTO.getLongitude(), // longitude first (x)
+                restaurantDTO.getLatitude()   // latitude second (y)
+        ));
         try {
             String imageUrl = cloudinaryService.uploadImage(coverImage);
             restaurant.setCoverImageUrl(imageUrl);
@@ -84,7 +89,6 @@ public class RestaurantService {
     public Restaurant updateRestaurant(String id, Restaurant updatedRestaurant) {
         Restaurant existing = getRestaurantById(id);
         existing.setName(updatedRestaurant.getName());
-        existing.setAddress(updatedRestaurant.getAddress());
 
         return restaurantRepository.save(existing);
     }

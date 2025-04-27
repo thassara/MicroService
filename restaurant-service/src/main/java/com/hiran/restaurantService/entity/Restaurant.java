@@ -2,6 +2,7 @@ package com.hiran.restaurantService.entity;
 import lombok.Data;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -11,7 +12,8 @@ public class Restaurant {
     @Id
     private String id;
     private String name;
-    private String address;          // Simple address field
+    private String formattedAddress;  // Human-readable address
+    private GeoJsonPoint location;   // GeoJSON point for coordinates
     private String contactNumber;    // Phone number for contact
     private String cuisineType;      // e.g., "Italian", "Chinese"
     private boolean available = false;
@@ -79,15 +81,6 @@ public class Restaurant {
         this.name = name;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-
     public boolean isAvailable() {
         return available;
     }
@@ -127,6 +120,22 @@ public class Restaurant {
 
     public void setCoverImageUrl(String coverImageUrl) {
         this.coverImageUrl = coverImageUrl;
+    }
+
+    public String getFormattedAddress() {
+        return formattedAddress;
+    }
+
+    public void setFormattedAddress(String formattedAddress) {
+        this.formattedAddress = formattedAddress;
+    }
+
+    public GeoJsonPoint getLocation() {
+        return location;
+    }
+
+    public void setLocation(GeoJsonPoint location) {
+        this.location = location;
     }
 }
 

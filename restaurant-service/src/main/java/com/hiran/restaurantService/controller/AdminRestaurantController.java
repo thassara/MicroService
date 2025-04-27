@@ -8,9 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/app-admin")
+@RequestMapping("/api/admin/restaurants")
 @CrossOrigin(origins = "http://localhost:3001", allowedHeaders = "*", allowCredentials = "true")
-public class AdminController {
+public class AdminRestaurantController {
+
     @Autowired
     private RestaurantService restaurantService;
 
@@ -19,13 +20,10 @@ public class AdminController {
         return restaurantService.getPendingRestaurants();
     }
 
-    // Approve/reject restaurant
-    @PatchMapping("/{id}/approval")
+    @PatchMapping("/{restaurantId}/approval")
     public Restaurant updateApprovalStatus(
-            @PathVariable String id,
+            @PathVariable String restaurantId,
             @RequestParam boolean approved) {
-        return restaurantService.updateApprovalStatus(id, approved);
+        return restaurantService.updateApprovalStatus(restaurantId, approved);
     }
 }
-
-//test

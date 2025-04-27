@@ -1,12 +1,12 @@
 package com.hiran.restaurantService.dto;
 
-import org.springframework.web.multipart.MultipartFile;
-
 public class RestaurantDTO {
     private String id;
     private String name;
     private boolean isAvailable;
-    private String address;
+    private String formattedAddress;
+    private double latitude;
+    private double longitude;
     private String contactNumber;
     private String cuisineType;
     private String openingTime;
@@ -15,6 +15,29 @@ public class RestaurantDTO {
     private String email;
     private String restaurantPassword;
 
+    public String getFormattedAddress() {
+        return formattedAddress;
+    }
+
+    public void setFormattedAddress(String formattedAddress) {
+        this.formattedAddress = formattedAddress;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
     public String getEmail() {
         return email;
     }
@@ -47,14 +70,6 @@ public class RestaurantDTO {
 
     public void setAvailable(boolean available) {
         isAvailable = available;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public String getContactNumber() {

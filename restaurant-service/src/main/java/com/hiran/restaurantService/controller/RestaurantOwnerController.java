@@ -1,28 +1,51 @@
 package com.hiran.restaurantService.controller;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hiran.restaurantService.client.OrderServiceClient;
 import com.hiran.restaurantService.dto.MenuItemDTO;
 import com.hiran.restaurantService.entity.MenuItem;
+import com.hiran.restaurantService.entity.Restaurant;
 import com.hiran.restaurantService.service.MenuService;
+import com.hiran.restaurantService.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/restaurants/{restaurantId}/menu")
+@RequestMapping("/api/owner/restaurants")
 @CrossOrigin(origins = "http://localhost:3001", allowedHeaders = "*", allowCredentials = "true")
-public class MenuController {
+public class RestaurantOwnerController {
+
+    @Autowired
+    private RestaurantService restaurantService;
 
     @Autowired
     private MenuService menuService;
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Autowired
+    private OrderServiceClient orderServiceClient;
+
+    @PutMapping("/{restaurantId}/availability")
+    public Restaurant toggleAvailability(@PathVariable String restaurantId) {
+        return restaurantService.toggleAvailability(restaurantId);
+    }
+
+    @PutMapping("/{restaurantId}")
+    public Restaurant updateRestaurant(@PathVariable String restaurantId,
+                                       @RequestBody Restaurant restaurant) {
+        return restaurantService.updateRestaurant(restaurantId, restaurant);
+    }
+
+    @DeleteMapping("/{restaurantId}")
+    public void deleteRestaurant(@PathVariable String restaurantId) {
+        restaurantService.deleteRestaurant(restaurantId);
+    }
+
+    @PostMapping(value = "/{restaurantId}/menu", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MenuItem> addMenuItem(
             @PathVariable String restaurantId,
             @RequestPart("menuItem") String menuItemJson,
@@ -40,7 +63,7 @@ public class MenuController {
         }
     }
 
-    @PutMapping("/update/{itemId}")
+    @PutMapping("/{restaurantId}/menu/{itemId}")
     public ResponseEntity<MenuItem> updateMenuItem(
             @PathVariable String restaurantId,
             @PathVariable String itemId,
@@ -48,7 +71,7 @@ public class MenuController {
         return ResponseEntity.ok(menuService.updateMenuItem(restaurantId, itemId, menuItemDTO));
     }
 
-    @DeleteMapping("/delete/{itemId}")
+    @DeleteMapping("/{restaurantId}/menu/{itemId}")
     public ResponseEntity<Void> deleteMenuItem(
             @PathVariable String restaurantId,
             @PathVariable String itemId) {
@@ -56,13 +79,7 @@ public class MenuController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping
-    public ResponseEntity<List<MenuItem>> getMenuItems(
-            @PathVariable String restaurantId) {
-        return ResponseEntity.ok(menuService.getMenuItems(restaurantId));
-    }
-
-    @PatchMapping("/availability/{itemId}")
+    @PatchMapping("/{restaurantId}/menu/{itemId}/availability")
     public ResponseEntity<MenuItem> toggleItemAvailability(
             @PathVariable String restaurantId,
             @PathVariable String itemId) {
@@ -73,4 +90,39 @@ public class MenuController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PutMapping("/{orderId}/confirm")
+    public String confirmOrder(@PathVariable String orderId) {
+        return orderServiceClient.updateOrderStatus(
+                orderId,
+                "RESTAURANT_CONFIRMED"  // Hardcoded status (or pass dynamically)
+        );
+    }
+
+    @PutMapping("/{orderId}/preparing")
+    public String markAsPreparing(@PathVariable String orderId) {
+        return orderServiceClient.updateOrderStatus(
+                orderId,
+                "PREPARING"
+        );
+    }
+
+    @PutMapping("/{orderId}/ready")
+    public String markAsReady(@PathVariable String orderId) {
+        return orderServiceClient.updateOrderStatus(
+                orderId,
+                "READY_FOR_PICKUP"
+        );
+    }
+
+    @PutMapping("/{orderId}/cancel")
+    public String markAsCancel(@PathVariable String orderId) {
+        return orderServiceClient.updateOrderStatus(
+                orderId,
+                "CANCELLED"
+        );
+    }
+
+
+
 }

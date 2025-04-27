@@ -28,13 +28,17 @@ public class RoleBasedAccessFilter extends AbstractGatewayFilterFactory<RoleBase
             }
 
             // Role-based access control
-            if (role.equals("RESTURENTADMIN") && path.startsWith("/restaurants")) {
+            if (role.equals("RESTURENTADMIN") && path.startsWith("/api/admin/restaurants")) {
                 return chain.filter(exchange); // Allow access to restaurant paths
             } else if (role.equals("CUSTOMER") && path.startsWith("/order")) {
                 return chain.filter(exchange); // Allow access to order paths
             } else if (role.equals("DELIVERY") && path.startsWith("/payment")) {
                 return chain.filter(exchange); // Allow access to payment paths
             }
+
+            /*else if (role.equals("RESTURENTOWNER") && path.startsWith("/api/owner/restaurants")) {
+                return chain.filter(exchange);
+            }*/  //madush meka balapn
 
             // If none of the above conditions match, reject the request
             return exchange.getResponse().setComplete(); // Unauthorized
