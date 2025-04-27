@@ -1,41 +1,32 @@
 package com.api_gateway.demo.service;
 
-import org.springframework.stereotype.Component;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import org.springframework.stereotype.Component;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Service;
 
-import static io.jsonwebtoken.Jwts.*;
+import jakarta.annotation.PostConstruct;
 
-@Component
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+
+@Service
 public class JwtService {
 
-    private final String SECRET_KEY = "mySuperSecretKeyThatIsLongEnough123456";
+    private SecretKey secretKey;
 
-    // Validate token
-    public void validateToken(String token) {
-        parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token); // Throws error if invalid
+    @PostConstruct
+    public void init() {
+        String secret = "mySuperSecretKeyThatIsLongEnough123456"; // must be 32+ chars
+        secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    // Extract the role from the token
-    public String extractRole(String token) {
-        Claims claims = parser()
-                .setSigningKey(SECRET_KEY)
+    public Claims validateToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
-
-
-        return claims.get("role", String.class);
-    }
-
-    public String extractUsername(String token) {
-        return parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
     }
 }
-
