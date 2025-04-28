@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hiran.restaurantService.dto.RestaurantDTO;
 import com.hiran.restaurantService.entity.MenuItem;
 import com.hiran.restaurantService.entity.Restaurant;
-import com.hiran.restaurantService.service.MenuService;
-import com.hiran.restaurantService.service.RestaurantService;
+import com.hiran.restaurantService.service.MenuServiceImpl;
+import com.hiran.restaurantService.service.RestaurantServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,27 +24,27 @@ import java.util.List;
 public class PublicRestaurantController {
 
 
-    private static final Logger logger = LoggerFactory.getLogger(RestaurantService.class);
+    private static final Logger logger = LoggerFactory.getLogger(RestaurantServiceImpl.class);
 
     @Autowired
-    private RestaurantService restaurantService;
+    private RestaurantServiceImpl restaurantServiceImpl;
 
     @Autowired
-    private MenuService menuService;
+    private MenuServiceImpl menuServiceImpl;
 
     @GetMapping
     public List<Restaurant> getAllRestaurants() {
-        return restaurantService.getAllRestaurants();
+        return restaurantServiceImpl.getAllRestaurants();
     }
 
     @GetMapping("/{restaurantId}")
     public Restaurant getRestaurantById(@PathVariable String restaurantId) {
-        return restaurantService.getRestaurantById(restaurantId);
+        return restaurantServiceImpl.getRestaurantById(restaurantId);
     }
 
     @GetMapping("/{restaurantId}/menu")
     public ResponseEntity<List<MenuItem>> getMenuItems(@PathVariable String restaurantId) {
-        return ResponseEntity.ok(menuService.getMenuItems(restaurantId));
+        return ResponseEntity.ok(menuServiceImpl.getMenuItems(restaurantId));
     }
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createRestaurant(
@@ -91,7 +91,7 @@ public class PublicRestaurantController {
             logger.debug("Parsed restaurant DTO with location: lat={}, long={}",
                     restaurantDTO.getLatitude(), restaurantDTO.getLongitude());
 
-            Restaurant createdRestaurant = restaurantService.createRestaurant(restaurantDTO, coverImage);
+            Restaurant createdRestaurant = restaurantServiceImpl.createRestaurant(restaurantDTO, coverImage);
             return ResponseEntity.ok(createdRestaurant);
 
         } catch (Exception e) {

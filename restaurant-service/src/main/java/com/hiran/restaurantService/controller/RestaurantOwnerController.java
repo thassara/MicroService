@@ -6,8 +6,8 @@ import com.hiran.restaurantService.client.OrderServiceClient;
 import com.hiran.restaurantService.dto.MenuItemDTO;
 import com.hiran.restaurantService.entity.MenuItem;
 import com.hiran.restaurantService.entity.Restaurant;
-import com.hiran.restaurantService.service.MenuService;
-import com.hiran.restaurantService.service.RestaurantService;
+import com.hiran.restaurantService.service.MenuServiceImpl;
+import com.hiran.restaurantService.service.RestaurantServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,28 +22,28 @@ import java.util.NoSuchElementException;
 public class RestaurantOwnerController {
 
     @Autowired
-    private RestaurantService restaurantService;
+    private RestaurantServiceImpl restaurantServiceImpl;
 
     @Autowired
-    private MenuService menuService;
+    private MenuServiceImpl menuServiceImpl;
 
     @Autowired
     private OrderServiceClient orderServiceClient;
 
     @PutMapping("/{restaurantId}/availability")
     public Restaurant toggleAvailability(@PathVariable String restaurantId) {
-        return restaurantService.toggleAvailability(restaurantId);
+        return restaurantServiceImpl.toggleAvailability(restaurantId);
     }
 
     @PutMapping("/{restaurantId}")
     public Restaurant updateRestaurant(@PathVariable String restaurantId,
                                        @RequestBody Restaurant restaurant) {
-        return restaurantService.updateRestaurant(restaurantId, restaurant);
+        return restaurantServiceImpl.updateRestaurant(restaurantId, restaurant);
     }
 
     @DeleteMapping("/{restaurantId}")
     public void deleteRestaurant(@PathVariable String restaurantId) {
-        restaurantService.deleteRestaurant(restaurantId);
+        restaurantServiceImpl.deleteRestaurant(restaurantId);
     }
 
     @PostMapping(value = "/{restaurantId}/menu", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -56,7 +56,7 @@ public class RestaurantOwnerController {
             ObjectMapper objectMapper = new ObjectMapper();
             MenuItemDTO menuItemDTO = objectMapper.readValue(menuItemJson, MenuItemDTO.class);
 
-            MenuItem createdItem = menuService.addMenuItem(restaurantId, menuItemDTO, imageFile);
+            MenuItem createdItem = menuServiceImpl.addMenuItem(restaurantId, menuItemDTO, imageFile);
             return ResponseEntity.ok(createdItem);
 
         } catch (Exception e) {
@@ -75,14 +75,14 @@ public class RestaurantOwnerController {
         MenuItemDTO menuItemDTO = objectMapper.readValue(menuItemJson, MenuItemDTO.class);
         menuItemDTO.setImageFile(imageFile);
 
-        return ResponseEntity.ok(menuService.updateMenuItem(restaurantId, itemId, menuItemDTO));
+        return ResponseEntity.ok(menuServiceImpl.updateMenuItem(restaurantId, itemId, menuItemDTO));
     }
 
     @DeleteMapping("/{restaurantId}/menu/{itemId}")
     public ResponseEntity<Void> deleteMenuItem(
             @PathVariable String restaurantId,
             @PathVariable String itemId) {
-        menuService.deleteMenuItem(restaurantId, itemId);
+        menuServiceImpl.deleteMenuItem(restaurantId, itemId);
         return ResponseEntity.noContent().build();
     }
 
@@ -91,7 +91,7 @@ public class RestaurantOwnerController {
             @PathVariable String restaurantId,
             @PathVariable String itemId) {
         try {
-            MenuItem updatedItem = menuService.toggleItemAvailability(restaurantId, itemId);
+            MenuItem updatedItem = menuServiceImpl.toggleItemAvailability(restaurantId, itemId);
             return ResponseEntity.ok(updatedItem);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();

@@ -1,7 +1,7 @@
 package com.hiran.restaurantService.controller;
 
 import com.hiran.restaurantService.entity.Restaurant;
-import com.hiran.restaurantService.service.RestaurantService;
+import com.hiran.restaurantService.service.RestaurantServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,17 +13,17 @@ import java.util.List;
 public class AdminRestaurantController {
 
     @Autowired
-    private RestaurantService restaurantService;
+    private RestaurantServiceImpl restaurantServiceImpl;
 
     @GetMapping("/pending")
     public List<Restaurant> getPendingRegistrations() {
-        return restaurantService.getPendingRestaurants();
+        return restaurantServiceImpl.getPendingRestaurants();
     }
 
     @PatchMapping("/{restaurantId}/approval")
     public Restaurant updateApprovalStatus(
             @PathVariable String restaurantId,
             @RequestParam boolean approved) {
-        return restaurantService.updateApprovalStatus(restaurantId, approved);
+        return restaurantServiceImpl.updateApprovalStatus(restaurantId, approved);
     }
 }
