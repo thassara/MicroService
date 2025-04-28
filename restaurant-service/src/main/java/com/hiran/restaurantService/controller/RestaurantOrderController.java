@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/restaurants/{restaurantId}/orders")
+@RequestMapping("/api/orders/restaurant/{restaurantId}/orders")
 public class RestaurantOrderController {
 
     private final RestaurantOrderService restaurantOrderService;
