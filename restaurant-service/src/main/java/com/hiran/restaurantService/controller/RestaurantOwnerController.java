@@ -1,5 +1,6 @@
 package com.hiran.restaurantService.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hiran.restaurantService.client.OrderServiceClient;
 import com.hiran.restaurantService.dto.MenuItemDTO;
@@ -63,11 +64,17 @@ public class RestaurantOwnerController {
         }
     }
 
-    @PutMapping("/{restaurantId}/menu/{itemId}")
+    @PutMapping(value = "/{restaurantId}/menu/{itemId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MenuItem> updateMenuItem(
             @PathVariable String restaurantId,
             @PathVariable String itemId,
-            @RequestBody MenuItemDTO menuItemDTO) {
+            @RequestPart("menuItem") String menuItemJson,
+            @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) throws JsonProcessingException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        MenuItemDTO menuItemDTO = objectMapper.readValue(menuItemJson, MenuItemDTO.class);
+        menuItemDTO.setImageFile(imageFile);
+
         return ResponseEntity.ok(menuService.updateMenuItem(restaurantId, itemId, menuItemDTO));
     }
 

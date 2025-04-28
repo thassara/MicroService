@@ -46,6 +46,16 @@ public class MenuService {
         existingItem.setPrice(menuItemDTO.getPrice());
         existingItem.setCategory(menuItemDTO.getCategory());
 
+        // Handle image upload if present
+        if (menuItemDTO.getImageFile() != null && !menuItemDTO.getImageFile().isEmpty()) {
+            try {
+                String imageUrl = cloudinaryService.uploadImage(menuItemDTO.getImageFile());
+                existingItem.setImageUrl(imageUrl);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to upload image", e);
+            }
+        }
+
         return menuItemRepository.save(existingItem);
     }
 
